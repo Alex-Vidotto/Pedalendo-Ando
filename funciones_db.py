@@ -1,4 +1,5 @@
 import sqlite3
+from datetime import date
 
 conexion = sqlite3.connect('base_datos_bicicleteria.db')
 
@@ -29,7 +30,14 @@ def crear_tabla_accesorios():
         nombre TEXT NOT NULL,
         precio REAL NOT NULL);''')
     conexion.commit()
-        
+    
+def crear_tabla_transacciones():
+    conexion.execute('''CREATE TABLE IF NOT EXISTS transacciones (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        fecha  NOT NULL,
+        tipo_operacion TEXT NOT NULL,
+        monto REAL NOT NULL);''')
+    conexion.commit()
 #FUNCIONES DE BUSQUEDA Y/O MODIFICACION DE DATOS
 def buscar_usuario(dni):
     cursor = conexion.cursor()
@@ -51,18 +59,43 @@ def registrar_usuario(lista_atributos):
     conexion.commit()
     return True
 
-def registrar_becicleta(lista_atributos):
+def registrar_bicicleta(lista_atributos):
     conexion.execute('''INSERT INTO bicicletas (marca, modelo, rodado, precio, cantidad) VALUES (?,?,?,?,?)''', lista_atributos)
     conexion.commit()
+    precio = float(lista_atributos[3])
+    cantidad = int(lista_atributos[4])
+    monto = precio * cantidad
+    registrar_transaccion("compra", monto)
     return True
+
+def buscar_bicicleta(marca, modelo):
+    cursor = conexion.cursor()
+    cursor.execute(f'''SELECT * FROM bicicletas WHERE marca = ? AND modelo = ?''', (marca, modelo,))
+    bicicleta = cursor.fetchone()
+    if not bicicleta:
+        return None
+    return True 
     
 def modificar_cantidad_bicicleta(marca, modelo, cantidad):
+    if cantidad < 0:
+        return False
+    precio_cantidad = precio_cantidad_bicicleta(marca, modelo)
+    if precio_cantidad is None:
+        return False
+    precio = precio_cantidad[0]
     cursor = conexion.cursor()
     cursor.execute(f'''UPDATE bicicletas SET cantidad = ? WHERE marca = ? AND modelo = ?''', (cantidad, marca, modelo))
     if cursor.rowcount == 0:
         return False
-    else:
-        conexion.commit()
-        return True
+    monto = precio * cantidad
+    registrar_transaccion("compra", monto)
+    conexion.commit()
+    return True
 
 
+#FUNCIONES DE TRANSACIONES
+
+def registrar_transaccion(tipo_operacion, monto):
+    fecha = date.today() #registra la fecha de la transacion
+    conexion.execute('''INSERT INTO transacciones (fecha, tipo_operacion, monto) VALUES (?,?,?)''', (fecha, tipo_operacion, monto))
+    conexion.commit()
