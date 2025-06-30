@@ -57,7 +57,7 @@ def precio_cantidad_bicicleta(marca, modelo):
 def registrar_usuario(lista_atributos):
     conexion.execute('''INSERT INTO usuarios (dni, nombre, apellido, correo, telefono) VALUES (?,?,?,?,?)''', lista_atributos)
     conexion.commit()
-    return True
+    return lista_atributos[0]
 
 def registrar_bicicleta(lista_atributos):
     conexion.execute('''INSERT INTO bicicletas (marca, modelo, rodado, precio, cantidad) VALUES (?,?,?,?,?)''', lista_atributos)

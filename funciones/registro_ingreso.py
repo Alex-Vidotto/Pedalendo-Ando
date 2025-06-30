@@ -58,5 +58,5 @@ def registrar_usuario_bd():
     usuario = list(atributo_usuario.values()) # guarda los datos en forma de lista
     
     registrar_usuario(usuario)
-    return usuario 
+    return usuario[0]
 

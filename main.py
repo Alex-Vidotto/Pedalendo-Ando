@@ -4,6 +4,7 @@ from funciones.registrar_producto import *
 from funciones.sql_funciones import *
 
 crear_tablas()
+dni = 0
 
 while True:
     limpiar_pantalla()
@@ -11,22 +12,21 @@ while True:
     
     match input("Elija una opción: "):
         case "1":
-            dato = ingresar_sistema()
-            if dato == "error":
+            dni = ingresar_sistema()
+            if dni == "error":
                 continue
             break
         case "2":
-            dato = registrar_usuario_bd()
+            dni = registrar_usuario_bd()
+            dni = int(dni)
             break
         case "3":
-            dato = [0]  # Valor por defecto para salir del bucle
             limpiar_pantalla()
             break
         case _:
             print("Opcion no disponible")
             continue
 
-dni = dato[0]
         
 while dni == 41877605:
     limpiar_pantalla()
@@ -34,7 +34,6 @@ while dni == 41877605:
     match input("Elija una opción: "):
         case "1":
             producto_bicicleta()
-            mostrar_catalogo("bicicletas")
             time.sleep(4)
         case "2":
             producto_accesorio()
@@ -49,11 +48,13 @@ while dni == 41877605:
                     dato = modificar_precio_accesorio()
                     time.sleep(2)
                 case "3":
+                    print("Volviendo al menu principal.")
+                    time.sleep(3)
                     continue
                 case _:
                     print("Opcion no disponible")
         case "4":
-            #dato = modificar_precio_producto()
+            
             break
             if dato is not None:
                 print("hola mundo")

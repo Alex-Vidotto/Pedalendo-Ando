@@ -152,6 +152,10 @@ def registrar_accesorio(lista_atributos):
     registrar_transaccion("compra", monto)
     return True
 
+def eliminar_producto(marca, modelo):
+    conexion.execute('''DELETE FROM bicicletas WHERE marca = ? AND modelo = ?''', (marca, modelo))
+    conexion.commit()
+    return mostrar_catalogo("bicicletas")
 
 #FUNCIONES DE TRANSACIONES
 
