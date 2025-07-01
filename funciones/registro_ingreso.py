@@ -14,7 +14,7 @@ def ingresar_sistema():
                 print(f"\nBienvenido/a {usuario[1]} {usuario[2]}!")
                 print("Igresando....")
                 time.sleep(3)
-                return usuario
+                return dni
             else:
                 intentos += 1
                 print("ERROR: DNI incorrectos.")

@@ -1,5 +1,7 @@
 import sqlite3
 from datetime import date
+import os
+import csv
 
 conexion = sqlite3.connect('base_datos_bicicleteria.db')
 
@@ -36,7 +38,7 @@ def crear_tablas():
     conexion.commit()
 
 #MOSTRAR CATALOGOS
-def mostrar_catalogo(nombre_tabla):
+def mostrar_tabla(nombre_tabla):
     cursor = conexion.cursor()
     cursor.execute(f'''SELECT * FROM {nombre_tabla}''')
     lista = cursor.fetchall()
@@ -44,11 +46,16 @@ def mostrar_catalogo(nombre_tabla):
         print(f"No hay {nombre_tabla} registradas.")
         return None
     else:
-        print(f"Catalogo de {nombre_tabla}:")
         for item in lista:
             print(item)
         return True
 
+def contenido_tabla(nombre_tabla):
+    cursor = conexion.cursor()
+    cursor.execute(f'''SELECT * FROM {nombre_tabla}''')
+    fila = cursor.fetchall()
+    columnas = [description[0] for description in cursor.description]
+    return columnas, fila
 
 def buscar_usuario(dni):
     cursor = conexion.cursor()
@@ -79,7 +86,15 @@ def buscar_bicicleta(marca, modelo):
     bicicleta = cursor.fetchone()
     if not bicicleta:
         return None
-    return True 
+    return bicicleta
+
+def buscar_accesorio(nombre):
+    cursor = conexion.cursor()
+    cursor.execute(f'''SELECT * FROM accesorios WHERE nombre = ?''', (nombre,))
+    accesorio = cursor.fetchone()
+    if not accesorio:
+        return None
+    return accesorio
 
 def precio_bicicleta(marca, modelo):
     cursor = conexion.cursor()
@@ -96,20 +111,28 @@ def cantidad_bicicleta(marca, modelo):
     return cantidad[0]
    
 def modificar_cantidad_bicicleta(marca, modelo, cantidad):
-    if cantidad < 0:
+    if cantidad == 0:
         return False
+    
     precio = precio_bicicleta(marca, modelo)
     if precio is None:
         return False
     precio = precio
     cantidad_actual = cantidad_bicicleta(marca, modelo)
-    cantidad += cantidad_actual
+    cantidad_nueva = cantidad + cantidad_actual
+    if cantidad_nueva < 0:
+        print("Error: La cantidad no puede ser negativa.")
+        return False
     cursor = conexion.cursor()
-    cursor.execute(f'''UPDATE bicicletas SET cantidad = ? WHERE marca = ? AND modelo = ?''', (cantidad, marca, modelo))
+    cursor.execute(f'''UPDATE bicicletas SET cantidad = ? WHERE marca = ? AND modelo = ?''', (cantidad_nueva, marca, modelo))
     if cursor.rowcount == 0:
         return False
-    monto = precio * cantidad
-    registrar_transaccion("compra", monto)
+    if cantidad < 0:
+        monto = precio * (-1*cantidad) #TRAEMOS A POSITIVO LA CANTIDAD PARA CALCULAR EL MONTO
+        registrar_transaccion("venta", monto)
+    else:
+        monto = precio * cantidad
+        registrar_transaccion("compra", (-1*monto))
     conexion.commit()
     return True
 
@@ -129,17 +152,22 @@ def buscar_accesorio_cantidad(nombre):
     return cantidad
 
 def modificar_cantidad_accesorio(nombre, cantidad):
-    if cantidad < 0:
+    if cantidad == 0:
         return False
+    
     cantidad_actual = buscar_accesorio_cantidad(nombre)
     cantidad_nueva = cantidad + cantidad_actual
     precio = buscar_accesorio_precio(nombre)
-    monto = precio * cantidad
     cursor = conexion.cursor()
     cursor.execute(f'''UPDATE accesorios SET cantidad = ? WHERE nombre = ?''', (cantidad_nueva, nombre))
     if cursor.rowcount == 0:
         return False
-    registrar_transaccion("compra", monto)
+    if cantidad < 0:
+        monto = precio * (-1*cantidad) #TRAEMOS A POSITIVO LA CANTIDAD PARA CALCULAR EL MONTO
+        registrar_transaccion("venta", monto)
+    else:
+        monto = precio * cantidad
+        registrar_transaccion("compra", (-1*monto)) #RESTAMOS CADA VEZ QUE COMPRAOMOS PRODUCTOS
     conexion.commit()
     return True
 
@@ -152,10 +180,16 @@ def registrar_accesorio(lista_atributos):
     registrar_transaccion("compra", monto)
     return True
 
-def eliminar_producto(marca, modelo):
+def eliminar_producto_accesorio_bd(nombre):
+    conexion.execute('''DELETE FROM accesorios WHERE nombre = ?''', (nombre,))
+    conexion.commit()
+    return mostrar_tabla("accesorios")
+
+
+def eliminar_producto_bicicleta_bd(marca, modelo):
     conexion.execute('''DELETE FROM bicicletas WHERE marca = ? AND modelo = ?''', (marca, modelo))
     conexion.commit()
-    return mostrar_catalogo("bicicletas")
+    return mostrar_tabla("bicicletas")
 
 #FUNCIONES DE TRANSACIONES
 
@@ -164,3 +198,10 @@ def registrar_transaccion(tipo_operacion, monto):
     conexion.execute('''INSERT INTO transacciones (fecha, tipo_operacion, monto) VALUES (?,?,?)''', (fecha, tipo_operacion, monto))
     conexion.commit()
 
+def exportar_csv(nombre_archivo):
+    columnas, fila = contenido_tabla(nombre_archivo)
+    with open(f'{nombre_archivo}.csv', 'w',newline='', encoding='utf-8') as archivo_csv:
+        writer = csv.writer(archivo_csv)
+        writer.writerow(columnas)  
+        writer.writerows(fila)    
+    print(f"Datos exportados a {nombre_archivo}.csv correctamente.")

@@ -30,7 +30,7 @@ def producto_bicicleta():
                 continue
     lista_de_salida = [marca, modelo] + lista_de_salida
     registrar_bicicleta(lista_de_salida) # registra la bicicleta directamente en la base de datos
-    return mostrar_catalogo("bicicletas")
+    return mostrar_tabla("bicicletas")
 
 def producto_accesorio():
     try:
@@ -49,7 +49,7 @@ def producto_accesorio():
             return False
         lista_de_salida = [nombre, cantidad, precio]
         registrar_accesorio(lista_de_salida)
-        return mostrar_catalogo("accesorios")
+        return mostrar_tabla("accesorios")
     
     except ValueError:
         print("Error: solo se aceptan numeros")
@@ -60,7 +60,13 @@ def modificar_precio_bicicleta():
     if buscar_bicicleta(marca, modelo) is None:
         print("La bicicleta no existe en la base de datos.")
         return False
-    precio = float(input("Ingrese el nuevo precio de {marca} {modelo} bicicleta: ").strip())
+    precio = float(input(f"Ingrese el nuevo precio de {marca} {modelo} bicicleta: ").strip())
+    
+    cursor = conexion.cursor()
+    cursor.execute(f'''UPDATE bicicletas SET precio = ? WHERE marca = ? AND modelo = ?''', (precio, marca, modelo))
+    conexion.commit()
+    print(f"El precio de la bicicleta {marca} {modelo} se actualizo correctamente.")
+    return mostrar_tabla("bicicletas")
     
 def modificar_precio_accesorio():
     nombre = input("Ingrese el nombre del accesorio: ").strip()
@@ -73,4 +79,40 @@ def modificar_precio_accesorio():
     cursor.execute(f'''UPDATE accesorios SET precio = ? WHERE nombre = ?''', (precio, nombre))
     conexion.commit()
     print(f"El precio del accesorio {nombre} se actualizo correctamente.")
-    return True
+    return mostrar_tabla("accesorios")
+
+def eliminar_producto_bicicleta():
+    marca = input("Ingrese la marca de la bicicleta: ").strip()
+    modelo = input("Ingrese el modelo de la bicicleta: ").strip()
+    if buscar_bicicleta(marca, modelo) is None:
+        print("La bicicleta no existe en la base de datos.")
+        return False
+    eliminar_producto_bicicleta_bd(marca, modelo)
+    return mostrar_tabla("bicicletas")
+
+def eliminar_producto_accesorio():
+    nombre = input("Ingrese el nombre del accesorio: ").strip()
+    if buscar_accesorio(nombre) is None:
+        print(f"No existe el accesorio {nombre} en el catalogo.")
+        return False
+    eliminar_producto_accesorio_bd(nombre)
+    return mostrar_tabla("accesorios")
+
+def comprar_bicicleta():
+    marca = input("Ingrese la marca de la bicicleta: ").strip()
+    modelo = input("Ingrese el modelo de la bicicleta: ").strip()
+    if buscar_bicicleta(marca, modelo) is None:
+        print(f"No existe la bicicleta {marca} {modelo} en el catalogo.")
+        return False
+    cantidad = -1 * int(input("Ingrese la cantidad de bicicletas compradas: ")) # se ingresa la cantidad como negativa
+    modificar_cantidad_bicicleta(marca, modelo, cantidad)
+    return mostrar_tabla("bicicletas")
+
+def comprar_accesorio():
+    nombre = input("Ingrese el nombre del accesorio: ").strip()
+    if buscar_accesorio(nombre) is None:
+        print(f"No existe el accesorio {nombre} en el catalogo.")
+        return False
+    cantidad = -1 * int(input("Ingrese la cantidad de bicicletas compradas: ")) # se ingresa la cantidad como negativa
+    modificar_cantidad_accesorio(nombre, cantidad)
+    return mostrar_tabla("accesorios")

@@ -6,8 +6,9 @@ from funciones.sql_funciones import *
 crear_tablas()
 dni = 0
 
-while True:
-    limpiar_pantalla()
+
+while dni == 0:
+    #limpiar_pantalla()
     menu_bienvenida()
     
     match input("Elija una opción: "):
@@ -27,7 +28,7 @@ while True:
             print("Opcion no disponible")
             continue
 
-        
+#BUCLE ADMIN        
 while dni == 41877605:
     limpiar_pantalla()
     menu_principal_admin()
@@ -54,9 +55,53 @@ while dni == 41877605:
                 case _:
                     print("Opcion no disponible")
         case "4":
-            
-            break
-            if dato is not None:
-                print("hola mundo")
-                
+            sub_menu_eliminar_producto()
+            match input("Elija una opción: "):
+                case "1":
+                    dato = eliminar_producto_bicicleta()
+                    time.sleep(2)
+                case "2":
+                    dato = eliminar_producto_accesorio()
+                    time.sleep(2)
+                case "3":
+                    print("Volviendo al menu principal.")
+                    time.sleep(3)
+                    continue
+                case _:
+                    print("Opcion no disponible")
+        case "5":
+            limpiar_pantalla()
+            exportar_csv("transacciones")
+            time.sleep(3)
+        case "6":
+            limpiar_pantalla()
+            print("Saliendo del sistema...")
+            time.sleep(3)
+            dni = 0
+            exit()
+        case _:
+            print("Opcion no disponible")
+            time.sleep(2)
+
+
+#BUCLE USUARIO        
+while dni != 41877605 and dni != 0:
+    limpiar_pantalla()
+    menu_principal_cliente()
+    match input("Elija una opción: "):
+        case "1":
+            mostrar_tabla("bicicletas")
+            comprar_bicicleta()
+            time.sleep(4)
+        case "2":
+            mostrar_tabla("accesorios")
+            comprar_accesorio()
+            time.sleep(4)
+        case "3":
+            print("Saliendo del sistema...")
+            time.sleep(2)
+            exit()
+        case _:
+            print("Opcion no disponible")
+            time.sleep(2)
 conexion.close()
