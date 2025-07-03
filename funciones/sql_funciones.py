@@ -1,5 +1,5 @@
 import sqlite3
-from datetime import date
+from datetime import date, datetime
 import os
 import csv
 
@@ -132,7 +132,7 @@ def modificar_cantidad_bicicleta(marca, modelo, cantidad):
         registrar_transaccion("venta", monto)
     else:
         monto = precio * cantidad
-        registrar_transaccion("compra", (-1*monto))
+        registrar_transaccion("compra", (monto))
     conexion.commit()
     return True
 
@@ -167,7 +167,7 @@ def modificar_cantidad_accesorio(nombre, cantidad):
         registrar_transaccion("venta", monto)
     else:
         monto = precio * cantidad
-        registrar_transaccion("compra", (-1*monto)) #RESTAMOS CADA VEZ QUE COMPRAOMOS PRODUCTOS
+        registrar_transaccion("compra", (monto)) #RESTAMOS CADA VEZ QUE COMPRAOMOS PRODUCTOS
     conexion.commit()
     return True
 
@@ -194,14 +194,17 @@ def eliminar_producto_bicicleta_bd(marca, modelo):
 #FUNCIONES DE TRANSACIONES
 
 def registrar_transaccion(tipo_operacion, monto):
+    if tipo_operacion == "compra":
+        monto = (-1 * monto)
     fecha = date.today() #registra la fecha de la transacion
     conexion.execute('''INSERT INTO transacciones (fecha, tipo_operacion, monto) VALUES (?,?,?)''', (fecha, tipo_operacion, monto))
     conexion.commit()
 
 def exportar_csv(nombre_archivo):
     columnas, fila = contenido_tabla(nombre_archivo)
-    with open(f'{nombre_archivo}.csv', 'w',newline='', encoding='utf-8') as archivo_csv:
+    fecha = datetime.now().strftime("%d-%H-%M-%S")
+    with open(f'{nombre_archivo}_{fecha}.csv', 'w',newline='', encoding='utf-8') as archivo_csv:
         writer = csv.writer(archivo_csv)
         writer.writerow(columnas)  
         writer.writerows(fila)    
-    print(f"Datos exportados a {nombre_archivo}.csv correctamente.")
+    print(f"Datos exportados a {nombre_archivo}_{fecha}.csv correctamente.")

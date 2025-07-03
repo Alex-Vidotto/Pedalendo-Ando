@@ -36,3 +36,10 @@ def sub_menu_eliminar_producto():
     print("1. Eliminar Bicicleta")
     print("2. Eliminar Accesorio")
     print("3. Salir")
+
+def sub_menu_exportar_registros():
+    print("1. Exportar Bicicletas")
+    print("2. Exportar Accesorios")
+    print("3. Exportar Usuarios")
+    print("4. Exportar Transacciones")
+    print("5. Salir")

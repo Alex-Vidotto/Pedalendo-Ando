@@ -1,6 +1,7 @@
 import re
 import time
 from funciones.sql_funciones import *
+from funciones.menus import *
 
 def ingresar_sistema():
     intentos = 0
@@ -59,4 +60,22 @@ def registrar_usuario_bd():
     
     registrar_usuario(usuario)
     return usuario[0]
+
+def exportar_archivos_csv():
+    while True:
+                sub_menu_exportar_registros()
+                match input("Elija una opción: "):
+                    case "1":
+                        exportar_csv("bicicletas")
+                    case "2":
+                        exportar_csv("accesorios")
+                    case "3":
+                        exportar_csv("usuarios")
+                    case "4":
+                        exportar_csv("transacciones")
+                    case "5":
+                        print("Volviendo al menu principal.")
+                        break
+                    case _:
+                        print("Opcion no disponible")
 

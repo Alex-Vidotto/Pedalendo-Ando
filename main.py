@@ -71,7 +71,7 @@ while dni == 41877605:
                     print("Opcion no disponible")
         case "5":
             limpiar_pantalla()
-            exportar_csv("transacciones")
+            exportar_archivos_csv()
             time.sleep(3)
         case "6":
             limpiar_pantalla()

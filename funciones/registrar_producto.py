@@ -104,7 +104,7 @@ def comprar_bicicleta():
     if buscar_bicicleta(marca, modelo) is None:
         print(f"No existe la bicicleta {marca} {modelo} en el catalogo.")
         return False
-    cantidad = -1 * int(input("Ingrese la cantidad de bicicletas compradas: ")) # se ingresa la cantidad como negativa
+    cantidad = -1 * int(input(f"Ingrese la cantidad de bicicletas {marca} {modelo} compradas: ")) # se ingresa la cantidad como negativa
     modificar_cantidad_bicicleta(marca, modelo, cantidad)
     return mostrar_tabla("bicicletas")
 
@@ -113,6 +113,6 @@ def comprar_accesorio():
     if buscar_accesorio(nombre) is None:
         print(f"No existe el accesorio {nombre} en el catalogo.")
         return False
-    cantidad = -1 * int(input("Ingrese la cantidad de bicicletas compradas: ")) # se ingresa la cantidad como negativa
+    cantidad = -1 * int(input(f"Ingrese la cantidad de {nombre} comprados: ")) # se ingresa la cantidad como negativa
     modificar_cantidad_accesorio(nombre, cantidad)
     return mostrar_tabla("accesorios")
