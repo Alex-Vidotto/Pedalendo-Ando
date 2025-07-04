@@ -33,8 +33,11 @@ while True:
             break
         case _:
             print("Opcion no disponible")
+            print("#dios te quiere ")
             time.sleep(2)
             limpiar_pantalla()
             continue
+
+#dios te quiere 
 
 conexion.close()

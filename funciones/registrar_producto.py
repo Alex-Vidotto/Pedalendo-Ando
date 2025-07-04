@@ -4,7 +4,7 @@ from funciones.sql_funciones import *
 atributo_bicicleta = {"rodado": "Rodado",
                       "precio": "Precio",
                       "cantidad": "Cantidad"}
-
+print("#dios te quiere ")
     
 def producto_bicicleta():
     lista_de_salida = []
