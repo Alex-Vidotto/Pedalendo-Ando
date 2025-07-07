@@ -28,13 +28,13 @@ def producto_bicicleta():
                 print("Error: Ingrese un caracter numerico.")
                 continue
     lista_de_salida = [marca, modelo] + lista_de_salida
-    registrar_bicicleta(lista_de_salida) # registra la bicicleta directamente en la base de datos
+    registrar("bicicletas",lista_de_salida) # registra la bicicleta directamente en la base de datos
     return mostrar_tabla("bicicletas")
 
 def producto_accesorio():
     try:
         nombre = input("Ingrese el nombre del accesorio: ").strip()
-        if buscar_accesorio_cantidad(nombre) is not None:
+        if buscar_atributo_accesorio(nombre, "cantidad") is not None:
             cantidad = int(input("Ingrese la cantidad de accesorios comprados: "))
             modificar_cantidad_accesorio(nombre, cantidad)
             print(f"La cantidad del accesorio {nombre} se registro en el stock.")
@@ -47,7 +47,7 @@ def producto_accesorio():
             print("Error: La cantidad y el precio deben ser mayores a 0.")
             return False
         lista_de_salida = [nombre, cantidad, precio]
-        registrar_accesorio(lista_de_salida)
+        registrar("accesorios",lista_de_salida)
         return mostrar_tabla("accesorios")
     
     except ValueError:
@@ -69,7 +69,7 @@ def modificar_precio_bicicleta():
     
 def modificar_precio_accesorio():
     nombre = input("Ingrese el nombre del accesorio: ").strip()
-    if buscar_accesorio_cantidad(nombre) is None:
+    if buscar_atributo_accesorio(nombre, "cantidad") is None:
         print("El accesorio no existe en la base de datos.")
         return False
     precio = float(input("Ingrese el nuevo precio del accesorio: ").strip())

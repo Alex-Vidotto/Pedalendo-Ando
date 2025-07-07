@@ -82,20 +82,6 @@ def buscar_usuario(dni):
     else:
         return usuario
 
-def registrar_usuario(lista_columna):
-    conexion.execute('''INSERT INTO usuarios (dni, nombre, apellido, correo, telefono) VALUES (?,?,?,?,?)''', lista_columna)
-    conexion.commit()
-    return True
-
-def registrar_bicicleta(lista_columna):
-    conexion.execute('''INSERT INTO bicicletas (marca, modelo, rodado, precio, cantidad) VALUES (?,?,?,?,?)''', lista_columna)
-    conexion.commit()
-    precio = float(lista_columna[3])
-    cantidad = int(lista_columna[4])
-    monto = precio * cantidad
-    registrar_transaccion("compra", monto)
-    return True
-
 def buscar_bicicleta(marca, modelo):
     cursor = conexion.cursor()
     cursor.execute(f'''SELECT * FROM bicicletas WHERE marca = ? AND modelo = ?''', (marca, modelo,))
@@ -112,29 +98,24 @@ def buscar_accesorio(nombre):
         return None
     return accesorio
 
-def precio_bicicleta(marca, modelo):
+def buscar_atributo_bicicleta(marca, modelo, atributo):
     cursor = conexion.cursor()
-    cursor.execute(f'''SELECT precio FROM bicicletas WHERE marca = ? AND modelo = ?''',(marca, modelo,))
-    precio = cursor.fetchone()
-    return precio[0]
- 
-def cantidad_bicicleta(marca, modelo):
-    cursor = conexion.cursor()
-    cursor.execute(f'''SELECT cantidad FROM bicicletas WHERE marca = ? AND modelo = ?''',(marca, modelo,))
-    cantidad = cursor.fetchone()
-    if not cantidad:
+    cursor.execute(f'''SELECT {atributo} FROM bicicletas WHERE marca = ? AND modelo = ?''', (marca, modelo,))
+    resultado = cursor.fetchone()
+    if not resultado:
         return None
-    return cantidad[0]
+    return resultado[0]
+
    
 def modificar_cantidad_bicicleta(marca, modelo, cantidad):
     if cantidad == 0:
         return False
     
-    precio = precio_bicicleta(marca, modelo)
+    precio = buscar_atributo_bicicleta(marca, modelo, "precio")
     if precio is None:
         return False
     precio = precio
-    cantidad_actual = cantidad_bicicleta(marca, modelo)
+    cantidad_actual = buscar_atributo_bicicleta(marca, modelo, "cantidad")
     cantidad_nueva = cantidad + cantidad_actual
     if cantidad_nueva < 0:
         print("Error: La cantidad no puede ser negativa.")
@@ -152,28 +133,22 @@ def modificar_cantidad_bicicleta(marca, modelo, cantidad):
     conexion.commit()
     return True
 
-def buscar_accesorio_precio(nombre):
+def buscar_atributo_accesorio(nombre, atributo):
     cursor = conexion.cursor()
-    cursor.execute(f'''SELECT precio FROM accesorios WHERE nombre = ?''', (nombre,))
-    precio = cursor.fetchone()
-    return precio[0]
-
-def buscar_accesorio_cantidad(nombre):
-    cursor = conexion.cursor()
-    cursor.execute(f'''SELECT cantidad FROM accesorios WHERE nombre = ?''', (nombre,))
-    accesorio = cursor.fetchone()
-    if not accesorio:
+    cursor.execute(f'''SELECT {atributo} FROM accesorios WHERE nombre = ?''', (nombre,))
+    resultado = cursor.fetchone()
+    if not resultado:
         return None
-    cantidad = accesorio[0]
-    return cantidad
+    return resultado[0]
+
 
 def modificar_cantidad_accesorio(nombre, cantidad):
     if cantidad == 0:
         return False
     
-    cantidad_actual = buscar_accesorio_cantidad(nombre)
+    cantidad_actual = buscar_atributo_accesorio(nombre, "cantidad")
     cantidad_nueva = cantidad + cantidad_actual
-    precio = buscar_accesorio_precio(nombre)
+    precio = buscar_atributo_accesorio(nombre, "precio")
     cursor = conexion.cursor()
     cursor.execute(f'''UPDATE accesorios SET cantidad = ? WHERE nombre = ?''', (cantidad_nueva, nombre))
     if cursor.rowcount == 0:
@@ -187,14 +162,6 @@ def modificar_cantidad_accesorio(nombre, cantidad):
     conexion.commit()
     return True
 
-def registrar_accesorio(lista_columna):
-    conexion.execute('''INSERT INTO accesorios (nombre, cantidad, precio) VALUES (?,?,?)''', lista_columna)
-    conexion.commit()
-    precio = float(lista_columna[2])
-    cantidad = int(lista_columna[1])
-    monto = precio * cantidad
-    registrar_transaccion("compra", monto)
-    return True
 
 def eliminar_producto_accesorio_bd(nombre):
     conexion.execute('''DELETE FROM accesorios WHERE nombre = ?''', (nombre,))
@@ -225,11 +192,12 @@ def exportar_csv(nombre_archivo):
         writer.writerow(columnas)  
         writer.writerows(fila)    
     print(f"Datos exportados a {nombre_archivo}_{fecha}.csv correctamente.")
-    
-
-    
+      
 def registrar(nombre_tabla, valores):
     columnas = columnas_tabla(nombre_tabla)
+    if columnas[0] == "id":
+        columnas = columnas[1:]
+    columnas = ", ".join(columnas)
     parametros = ", ".join(["?"] * len(valores))
     conexion.execute(f'''INSERT INTO {nombre_tabla} ({columnas}) VALUES ({parametros})''', valores)
     conexion.commit()

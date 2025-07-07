@@ -36,7 +36,7 @@ atributo_usuario = {"DNI":"dni",
                     "correo": "Correo",
                     "telefono": "Telefono"}
 
-def registrar_usuario_bd():
+def registrar_usuario():
     for atributo in atributo_usuario:
         while True:
             dato = input(f"Ingrese su {atributo_usuario[atributo]}: ").strip()
@@ -69,7 +69,7 @@ def registrar_usuario_bd():
         atributo_usuario[atributo] = dato # remplaza los valores por los datos ingresados
     usuario = list(atributo_usuario.values()) # guarda los datos en forma de lista
     
-    registrar_usuario(usuario)
+    registrar("usuarios",usuario)
     print(f"Usuario {usuario[1]} {usuario[2]} registrado correctamente.")
     time.sleep(2)
     return usuario[0]
@@ -151,7 +151,7 @@ def admin():
                 time.sleep(3)
             case "6":
                 limpiar_pantalla()
-                print("Saliendo del sistema...")
+                print("Volviendo a la pantalla de inicio...")
                 time.sleep(3)
                 dni = 0
                 break
@@ -173,7 +173,7 @@ def usuario():
                 comprar_accesorio()
                 time.sleep(4)
             case "3":
-                print("Saliendo del sistema...")
+                print("Volviendo a la pantalla de inicio...")
                 time.sleep(2)
                 break
             case _:

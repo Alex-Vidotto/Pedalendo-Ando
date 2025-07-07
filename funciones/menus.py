@@ -18,7 +18,7 @@ def menu_principal_cliente():
     print(f"{5*'-'} MENÚ PRINCIPAL USUARIO {'-'*5}")
     print("1  Comprar Bicicletas")
     print("2  Comprar Accesorios y Repuestos")
-    print("3  Salir")
+    print("3  cerrar sesion")
     
 
 #MENUS ADMINISTRADOR    
@@ -30,20 +30,20 @@ def menu_principal_admin():
     print("3. Actualizar precios")
     print("4. Eliminar productos")
     print("5. Exportar registro de trnasacciones")
-    print("6. Salir") 
+    print("6. Cerrar sesion") 
        
 def sub_menu_modificar_precio():
     limpiar_pantalla()
     print(f"{5*'-'} MENÚ MODIFICAR PRECIO {'-'*5}")
     print("1. Modificar precio de Bicicleta")
     print("2. Modificar precio de Accesorio")
-    print("3. Salir")
+    print("3. Volver al menu")
     
 def sub_menu_eliminar_producto():
     limpiar_pantalla()
     print("1. Eliminar Bicicleta")
     print("2. Eliminar Accesorio")
-    print("3. Salir")
+    print("3. Menu principal")
 
 def sub_menu_exportar_registros():
     limpiar_pantalla()
@@ -52,4 +52,4 @@ def sub_menu_exportar_registros():
     print("2. Exportar Accesorios")
     print("3. Exportar Usuarios")
     print("4. Exportar Transacciones")
-    print("5. Salir")
+    print("5. Volver al menu")

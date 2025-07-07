@@ -20,7 +20,7 @@ while True:
                 continue
             usuario()
         case "2":
-            dni = registrar_usuario_bd()
+            dni = registrar_usuario()
             dni = int(dni)
             if dni == 41877605:
                 admin()
