@@ -107,11 +107,11 @@ def admin():
             case "1":
                 mostrar_tabla("bicicletas")
                 producto_bicicleta()
-                time.sleep(4)
+                time.sleep(5)
             case "2":
                 mostrar_tabla("accesorios")
                 producto_accesorio()
-                time.sleep(4)
+                time.sleep(5)
             case "3":
                 sub_menu_modificar_precio()
                 match input("Elija una opción: "):

@@ -131,7 +131,7 @@ def modificar_cantidad_bicicleta(marca, modelo, cantidad):
         monto = precio * cantidad
         registrar_transaccion("compra", (monto))
     conexion.commit()
-    return True
+    return monto
 
 def buscar_atributo_accesorio(nombre, atributo):
     cursor = conexion.cursor()
@@ -160,7 +160,7 @@ def modificar_cantidad_accesorio(nombre, cantidad):
         monto = precio * cantidad
         registrar_transaccion("compra", (monto)) #RESTAMOS CADA VEZ QUE COMPRAOMOS PRODUCTOS
     conexion.commit()
-    return True
+    return monto
 
 
 def eliminar_producto_accesorio_bd(nombre):
