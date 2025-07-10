@@ -34,6 +34,9 @@ def crear_tablas():
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         fecha  NOT NULL,
         tipo_operacion TEXT NOT NULL,
+        producto TEXT NOT NULL,
+        marca_modelo TEXT NOT NULL,
+        cantidad TEXT NOT NULL,
         monto REAL NOT NULL);''')
     conexion.commit()
 
@@ -108,6 +111,7 @@ def buscar_atributo_bicicleta(marca, modelo, atributo):
 
    
 def modificar_cantidad_bicicleta(marca, modelo, cantidad):
+    marca_modelo = (f"{marca} {modelo}")
     if cantidad == 0:
         return False
     
@@ -125,11 +129,12 @@ def modificar_cantidad_bicicleta(marca, modelo, cantidad):
     if cursor.rowcount == 0:
         return False
     if cantidad < 0:
-        monto = precio * (-1*cantidad) #TRAEMOS A POSITIVO LA CANTIDAD PARA CALCULAR EL MONTO
-        registrar_transaccion("venta", monto)
+        cantidad = -1 * (cantidad)
+        monto = precio * (cantidad) #TRAEMOS A POSITIVO LA CANTIDAD PARA CALCULAR EL MONTO
+        registrar_transaccion("venta", "bicicleta", marca_modelo, cantidad, monto)
     else:
         monto = precio * cantidad
-        registrar_transaccion("compra", (monto))
+        registrar_transaccion("compra","bicicleta", marca_modelo, cantidad, (monto))
     conexion.commit()
     return monto
 
@@ -154,11 +159,12 @@ def modificar_cantidad_accesorio(nombre, cantidad):
     if cursor.rowcount == 0:
         return False
     if cantidad < 0:
-        monto = precio * (-1*cantidad) #TRAEMOS A POSITIVO LA CANTIDAD PARA CALCULAR EL MONTO
-        registrar_transaccion("venta", monto)
+        cantidad = -1 * cantidad
+        monto = precio * (cantidad) #TRAEMOS A POSITIVO LA CANTIDAD PARA CALCULAR EL MONTO
+        registrar_transaccion("venta", "accesorios", nombre, cantidad, monto)
     else:
         monto = precio * cantidad
-        registrar_transaccion("compra", (monto)) #RESTAMOS CADA VEZ QUE COMPRAOMOS PRODUCTOS
+        registrar_transaccion("compra", "accesorios", nombre, cantidad, (monto)) #RESTAMOS CADA VEZ QUE COMPRAOMOS PRODUCTOS
     conexion.commit()
     return monto
 
@@ -176,11 +182,11 @@ def eliminar_producto_bicicleta_bd(marca, modelo):
 
 #FUNCIONES DE TRANSACIONES
 
-def registrar_transaccion(tipo_operacion, monto):
+def registrar_transaccion(tipo_operacion, producto, marca_modelo, cantidad, monto):
     if tipo_operacion == "compra":
         monto = (-1 * monto)
     fecha = date.today() #registra la fecha de la transacion
-    conexion.execute('''INSERT INTO transacciones (fecha, tipo_operacion, monto) VALUES (?,?,?)''', (fecha, tipo_operacion, monto))
+    conexion.execute('''INSERT INTO transacciones (fecha, tipo_operacion, producto, marca_modelo, cantidad, monto) VALUES (?,?,?,?,?,?)''', (fecha, tipo_operacion, producto, marca_modelo, cantidad, monto))
     conexion.commit()
 
 def exportar_csv(nombre_archivo):

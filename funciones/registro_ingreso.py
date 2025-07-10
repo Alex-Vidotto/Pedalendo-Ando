@@ -79,16 +79,28 @@ def exportar_archivos_csv():
                 sub_menu_exportar_registros()
                 match input("Elija una opción: "):
                     case "1":
-                        exportar_csv("bicicletas")
+                        mostrar_tabla("bicicletas")
+                        confirmacion = input("Desea exportar la tabla? [Y/N]:").lower()
+                        if confirmacion == "y":
+                            exportar_csv("bicicletas")
                         time.sleep(4)
                     case "2":
-                        exportar_csv("accesorios")
+                        mostrar_tabla("accesorios")
+                        confirmacion = input("Desea exportar la tabla? [Y/N]:").lower()
+                        if confirmacion == "y":                        
+                            exportar_csv("accesorios")
                         time.sleep(4)
                     case "3":
-                        exportar_csv("usuarios")
+                        mostrar_tabla("usuarios")
+                        confirmacion = input("Desea exportar la tabla? [Y/N]:").lower()
+                        if confirmacion == "y":
+                            exportar_csv("usuarios")
                         time.sleep(4)
                     case "4":
-                        exportar_csv("transacciones")
+                        mostrar_tabla("transacciones")
+                        confirmacion = input("Desea exportar la tabla? [Y/N]:").lower()
+                        if confirmacion == "y":                        
+                            exportar_csv("transacciones")
                         time.sleep(4)
                     case "5":
                         print("Volviendo al menu principal.")

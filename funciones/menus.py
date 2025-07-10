@@ -48,8 +48,8 @@ def sub_menu_eliminar_producto():
 def sub_menu_exportar_registros():
     limpiar_pantalla()
     print(f"{5*'-'} EXPORTAR REGISTROS DEL SISTEMA {'-'*5}")
-    print("1. Exportar Bicicletas")
-    print("2. Exportar Accesorios")
-    print("3. Exportar Usuarios")
-    print("4. Exportar Transacciones")
+    print("1. Bicicletas")
+    print("2. Accesorios")
+    print("3. Usuarios")
+    print("4. Transacciones")
     print("5. Volver al menu")
